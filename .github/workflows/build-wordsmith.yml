@@ -1,0 +1,74 @@
+name: Stage
+
+on:
+  pull_request:
+    types:
+      - labeled
+
+jobs:
+  build-and-push-db:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Build and push Docker image
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        IMAGE_NAME: wordsmith
+        TAG: db
+      run: |
+        echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+        docker buildx create --use
+        docker buildx build --push --platform linux/amd64,linux/arm64 -t $DOCKERHUB_USERNAME/$IMAGE_NAME:$TAG .
+      working-directory: ./db
+
+  build-and-push-words:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Build and push Docker image
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        IMAGE_NAME: wordsmith
+        TAG: words
+      run: |
+        echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+        docker buildx create --use
+        docker buildx build --push --platform linux/amd64,linux/arm64 -t $DOCKERHUB_USERNAME/$IMAGE_NAME:$TAG .
+      working-directory: ./words
+
+  build-and-push-web:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Build and push Docker image
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        IMAGE_NAME: wordsmith
+        TAG: web
+      run: |
+        echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+        docker buildx create --use
+        docker buildx build --push --platform linux/amd64,linux/arm64 -t $DOCKERHUB_USERNAME/$IMAGE_NAME:$TAG .
+      working-directory: ./web
+
