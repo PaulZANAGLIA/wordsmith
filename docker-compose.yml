@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  web:
+    image: web-tp1
+    ports:
+      - "8080:80"
+
+  words:
+    image: words-tp1
+
+  db:
+    image: db-tp1
+# docker-compose up
