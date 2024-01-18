@@ -4,7 +4,7 @@ services:
   web:
     image: web-tp1
     ports:
-      - "8080:80"
+      - "8081:80"
 
   words:
     image: words-tp1
